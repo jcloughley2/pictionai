@@ -1,10 +1,12 @@
 from openai import OpenAI
 from django.shortcuts import render, redirect
 from django.conf import settings
+import weave
 
 # Configure OpenAI API key
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
+@weave.op()
 def get_random_object_name():
     # Make the OpenAI API call
     response = client.chat.completions.create(
@@ -16,6 +18,7 @@ def get_random_object_name():
     )
     return response.choices[0].message.content.strip()
 
+@weave.op()
 def get_prompt_image(prompt):
     # Make the OpenAI API call to generate an image
     response = client.images.generate(
@@ -57,6 +60,7 @@ def submit_guess(request):
         # Redirect to the result page
         return redirect('result')
 
+@weave.op()
 def get_judgment(original_prompt, user_guess):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -72,5 +76,8 @@ def result(request):
     judgment = request.session.get('judgment', "No judgment available")
 
     return render(request, 'pictionai_app/result.html', {'judgment': judgment})
+
+# Initialise the weave project
+weave.init('pictionai')
 
 
