@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Object Name</title>
+</head>
+<body>
+    <h1>Random Object</h1>
+    <p>{{ random_object_name }}</p>
+    <h1>Image</h1>
+    <img src="{{ prompt_image }}" alt="Generated image for {{ prompt_image }}" width=""250">
+    <h3>Guess the Object!</h3>
+    <form action="{% url 'submit_guess' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="user_guess" placeholder="Enter your guess" required>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
