@@ -8,22 +8,27 @@ client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 @weave.op()
 def get_random_object_name():
+    # Define system and user prompts
+    system_prompt = "You are an assistant that provides names of random objects."
+    user_prompt = "Please provide the name of a random object."
+
     # Make the OpenAI API call
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",  # You can also use gpt-4 if needed
         messages=[
-            {"role": "system", "content": "You are an assistant that provides names of random objects."},
-            {"role": "user", "content": "Please provide the name of a random object."}
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
         ]
     )
+
     return response.choices[0].message.content.strip()
 
 @weave.op()
-def get_prompt_image(prompt):
+def get_prompt_image(original_prompt):
     # Make the OpenAI API call to generate an image
     response = client.images.generate(
         model="dall-e-3",
-        prompt=prompt,
+        prompt=original_prompt,
         size="1024x1024",
         quality="standard",
         n=1,
