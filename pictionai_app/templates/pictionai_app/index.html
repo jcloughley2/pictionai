@@ -3,20 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Object Name</title>
+    <title>Random Object Game</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'pictionai_app/css/styles.css' %}">
 </head>
 <body>
-    <h1>Random Object</h1>
-    <p>{{ random_object_name }}</p>
-    <h1>Image</h1>
-    <img src="{{ prompt_image }}" alt="Generated image for {{ prompt_image }}" width=""250">
-    <h3>Guess the Object!</h3>
-    <form action="{% url 'submit_guess' %}" method="POST">
-        {% csrf_token %}
-        <input type="text" name="user_guess" placeholder="Enter your guess" required>
-        <button type="submit">Submit</button>
-    </form>
+    <h1>Welcome to the Random Object Game!</h1>
+    
+    <!-- Let's Play Button -->
+    <button id="play-button">Let's Play</button>
+
+    <!-- Random Object Name and Image (Hidden Initially) -->
+    <div id="game-area" style="display: none;">
+        <h2>Random Object: <span id="random-object-name"></span></h2>
+        <img id="prompt-image" alt="Generated Image" style="max-width: 100%;">
+
+        <!-- Submission Form (Hidden Initially) -->
+        <h3>Guess the Object!</h3>
+        <form id="guess-form" action="{% url 'submit_guess' %}" method="POST" style="display: none;">
+            {% csrf_token %}
+            <input type="text" name="user_guess" placeholder="Enter your guess" required>
+            <button type="submit">Submit Guess</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('play-button').addEventListener('click', function() {
+            // Make an AJAX request to the backend to fetch the random object and image
+            fetch("{% url 'get_random_object_and_image' %}")
+            .then(response => response.json())
+            .then(data => {
+                // Display the random object and image
+                document.getElementById('random-object-name').textContent = data.random_object_name;
+                document.getElementById('prompt-image').src = data.prompt_image;
+                
+                // Show the game area and form after the image is loaded
+                document.getElementById('game-area').style.display = 'block';
+                document.getElementById('guess-form').style.display = 'block';
+            });
+        });
+    </script>
 </body>
 </html>

@@ -23,4 +23,5 @@ urlpatterns = [
     path('', views.home, name='home'),  # Homepage
     path('submit_guess/', views.submit_guess, name='submit_guess'),  # Form submission
     path('result/', views.result, name='result'),  # Result page
+    path('get_random_object_and_image/', views.get_random_object_and_image, name='get_random_object_and_image'),
 ]

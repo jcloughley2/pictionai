@@ -1,5 +1,6 @@
 from openai import OpenAI
 from django.shortcuts import render, redirect
+from django.http import JsonResponse  # Added for JSON response
 from django.conf import settings
 import weave
 
@@ -20,7 +21,6 @@ def get_random_object_name():
             {"role": "user", "content": user_prompt}
         ]
     )
-
     return response.choices[0].message.content.strip()
 
 @weave.op()
@@ -36,18 +36,23 @@ def get_prompt_image(original_prompt):
     return response.data[0].url
 
 def home(request):
-    # Get a random object name and its corresponding image
-    random_object_name = get_random_object_name()
-    prompt_image = get_prompt_image(random_object_name)
+    # Render the homepage without fetching object and image yet
+    return render(request, 'pictionai_app/index.html')
 
-    # Store the random object name in the session
-    request.session['random_object_name'] = random_object_name
+def get_random_object_and_image(request):
+    if request.method == 'GET':
+        # Get the random object and its corresponding image
+        random_object_name = get_random_object_name()
+        prompt_image = get_prompt_image(random_object_name)
 
-    # Render the homepage with the random object name and its image
-    return render(request, 'pictionai_app/index.html', {
-        'random_object_name': random_object_name,
-        'prompt_image': prompt_image
-    })
+        # Store the random object name in the session
+        request.session['random_object_name'] = random_object_name
+
+        # Return the random object name and image as JSON
+        return JsonResponse({
+            'random_object_name': random_object_name,
+            'prompt_image': prompt_image
+        })
 
 def submit_guess(request):
     if request.method == "POST":
@@ -82,7 +87,7 @@ def result(request):
 
     return render(request, 'pictionai_app/result.html', {'judgment': judgment})
 
-# Initialise the weave project
+# Initialize the weave project
 weave.init('pictionai')
 
 
