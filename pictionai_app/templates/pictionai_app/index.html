@@ -1,47 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Object Game</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'pictionai_app/css/styles.css' %}">
-</head>
-<body>
-    <h1>Welcome to the Random Object Game!</h1>
-    
-    <!-- Let's Play Button -->
-    <button id="play-button">Let's Play</button>
+{% extends 'pictionai_app/base.html' %}
 
-    <!-- Random Object Name and Image (Hidden Initially) -->
-    <div id="game-area" style="display: none;">
-        <h2>Random Object: <span id="random-object-name"></span></h2>
-        <img id="prompt-image" alt="Generated Image" style="max-width: 100%;">
+{% block title %}Random Object Game{% endblock %}
 
-        <!-- Submission Form (Hidden Initially) -->
+{% block content %}
+<div class="col-lg-8 mx-auto p-4 py-md-5">
+    <button type="button" class="btn btn-primary btn-lg w-100 mb-3" id="play-button">
+        Let's Play
+        <span id="spinner" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true" style="display: none;"></span>
+    </button>
+    <div id="game-area" class="card p-3" style="display: none;">
+        <img id="prompt-image" class="img-fluid mb-3" alt="Generated Image" style="max-width: 100%;">
         <h3>Guess the Object!</h3>
         <form id="guess-form" action="{% url 'submit_guess' %}" method="POST" style="display: none;">
             {% csrf_token %}
-            <input type="text" name="user_guess" placeholder="Enter your guess" required>
-            <button type="submit">Submit Guess</button>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="user_guess" placeholder="Enter your guess" required>
+                <button type="submit" class="btn btn-success">Submit</button>
+            </div>
         </form>
     </div>
+</div>
+<script>
+    document.getElementById('play-button').addEventListener('click', function() {
+        // Show the spinner
+        document.getElementById('spinner').style.display = 'inline-block';
 
-    <script>
-        document.getElementById('play-button').addEventListener('click', function() {
-            // Make an AJAX request to the backend to fetch the random object and image
-            fetch("{% url 'get_random_object_and_image' %}")
-            .then(response => response.json())
-            .then(data => {
-                // Display the random object and image
-                document.getElementById('random-object-name').textContent = data.random_object_name;
-                document.getElementById('prompt-image').src = data.prompt_image;
-                
-                // Show the game area and form after the image is loaded
-                document.getElementById('game-area').style.display = 'block';
-                document.getElementById('guess-form').style.display = 'block';
-            });
+        fetch("{% url 'get_random_object_and_image' %}")
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('prompt-image').src = data.prompt_image;
+            document.getElementById('game-area').style.display = 'block';
+            document.getElementById('guess-form').style.display = 'block';
+        })
+        .finally(() => {
+            // Hide the spinner
+            document.getElementById('spinner').style.display = 'none';
         });
-    </script>
-</body>
-</html>
+    });
+</script>
+{% endblock %}

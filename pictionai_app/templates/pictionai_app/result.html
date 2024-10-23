@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submission Result</title>
-</head>
-<body>
-    <h1>Thank you for your submission!</h1>
-    <p>{{ judgment }}</p>
+{% extends 'pictionai_app/base.html' %}
 
-    <a href="{% url 'home' %}">Go back to homepage</a>
-</body>
-</html>
+{% block title %}Submission Result{% endblock %}
+
+{% block content %}
+<div class="col-lg-8 mx-auto p-4 py-md-5 text-center">
+    <h1 class="mb-4">Thank you for your submission!</h1>
+    <p class="lead">{{ judgment }}</p>
+    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Go back to homepage</a>
+</div>
+{% endblock %}
